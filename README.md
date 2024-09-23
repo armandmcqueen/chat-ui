@@ -1,0 +1,1 @@
+dangerouslyAllowBrowser: true

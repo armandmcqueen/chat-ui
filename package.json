@@ -1,0 +1,25 @@
+{
+  "name": "claude-clone",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.27.3",
+    "dompurify": "^3.1.6",
+    "highlight.js": "^11.10.0",
+    "lit": "^3.2.0",
+    "marked": "^14.1.2",
+    "marked-highlight": "^2.1.4"
+  },
+  "devDependencies": {
+    "@types/dompurify": "^3.0.5",
+    "@types/highlight.js": "^9.12.4",
+    "@types/marked": "^5.0.2",
+    "vite": "^5.4.1"
+  }
+}
