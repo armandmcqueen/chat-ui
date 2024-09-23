@@ -1,27 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Clone the Claude UI as closely as possible. It is human, soft, and friendly, with light orange colors. */
-
-
-/* Add title style */
-
-
-
-html {
-  background-color: #f2efe7;
-  /* Use clean typefaces like stripe's */
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
-  /* font-weight: 400; */
-  /* font-size: 1rem; */
+pre {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  white-space: pre-wrap; /* Wrap long lines */
+  word-break: break-word; /* Break long words */
+  overflow-x: auto; /* Add horizontal scroll if needed */
+  max-width: 100%; /* Ensure it doesn't exceed the container's width */
 }
 
-/* body {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-} */
+.hljs {
+  @apply py-1 pb-5 rounded-md leading-normal;
+}
+
+.chatoutput ol {
+  @apply py-1.5;
+}
+
+code {
+  font-size: 0.875rem;
+  @apply px-1 py-0.5 rounded bg-[#22272e] text-white;
+}
+
+.chatoutput li {
+  @apply list-decimal ml-4 py-0.5;
+}
+
+.chatoutput p {
+  @apply py-1.5;
+}
+
+

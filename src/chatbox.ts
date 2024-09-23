@@ -1,4 +1,5 @@
-import {LitElement, css, html, unsafeCSS} from 'lit';
+import {LitElement, html, css, unsafeCSS} from 'lit';
+import "./index.css";
 import { state } from 'lit/decorators.js';
 import Anthropic from '@anthropic-ai/sdk';
 import { AnthropicError } from "@anthropic-ai/sdk/error";
@@ -6,13 +7,15 @@ import Message = Anthropic.Message;
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { markedHighlight } from "marked-highlight";
 import { config } from './config.js';
+import style from "./index.css?inline";
+
 
 
 import { MessageStream } from "@anthropic-ai/sdk/lib/MessageStream";
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import hljs from 'highlight.js';
-import highlightStyle from 'highlight.js/styles/github.css?inline';
+import highlightStyle from 'highlight.js/styles/github-dark-dimmed.css?inline';
 
 
 
@@ -89,219 +92,72 @@ export class ClaudeClone extends LitElement {
       { role: 'user', content: "I'm trying to understand how to use async/await in JavaScript. Can you explain it with an example?" },
       { role: 'assistant', content: "Certainly! Async/await is a way to work with asynchronous operations in JavaScript, making the code easier to read and write. Here's a simple example to illustrate how it works:\n\n```javascript\nasync function fetchUserData(userId) {\n  try {\n    const response = await fetch(`https://api.example.com/users/${userId}`);\n    if (!response.ok) {\n      throw new Error('Failed to fetch user data');\n    }\n    const userData = await response.json();\n    console.log('User data:', userData);\n    return userData;\n  } catch (error) {\n    console.error('Error:', error.message);\n  }\n}\n\n// Usage\nfetchUserData(123);\n```\n\nIn this example:\n\n1. We define an `async` function called `fetchUserData`.\n2. Inside the function, we use `await` to pause execution until the `fetch` operation completes.\n3. We check if the response is okay, and if not, we throw an error.\n4. We use `await` again to parse the JSON response.\n5. If any error occurs during this process, it's caught in the `catch` block.\n\nThe `async` keyword allows us to use `await` inside the function, and `await` pauses the execution of the function until the promise is resolved or rejected.\n\nThis approach allows you to write asynchronous code that looks and behaves more like synchronous code, making it easier to understand and maintain.\n\nDo you have any specific questions about async/await or would you like me to elaborate on any part of the explanation?" },
       { role: 'user', content: "That's helpful, thanks! Can you show me how to use this in a real-world scenario, like loading data for a web application?" },
+      { role: 'assistant', content: "Sure! Here's an example of how you might use async/await to load data for a web application:\n\n```javascript\nasync function loadData() {\n  try {\n    const response = await fetch('https://api.example.com/data');\n    if (!response.ok) {\n      throw new Error('Failed to load data');\n    }\n    const data = await response.json();\n    console.log('Data loaded:', data);\n    return data;\n  } catch (error) {\n    console.error('Error:', error.message);\n  }\n}\n\n// Usage\nloadData();\n```\n\nIn this example, we use the `fetch` API to load data from a URL and handle any errors that might occur during the process.\n\nAnd here's more random code\n```javascript\nasync function loadData() {\n  try {\n    const response = await fetch('https://api.example.com/data');\n    if (!response.ok) {\n      throw new Error('Failed to load data');\n```" },
     ];
     this.saveChatState();
   }
 
   static override styles = css`
-    :host {
-      display: block;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      background-color: #f2efe7;
-      color: #1a1a1a;
-      min-height: 100vh;
-      position: relative;
-    }
-    .chat-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      padding-bottom: 80px;
-    }
-    .message {
-      display: flex;
-      align-items: flex-start;
-      animation: fadeIn 0.3s ease-out;
-      margin-bottom: 16px;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .avatar {
-      width: 24px;
-      height: 24px;
-      border-radius: 10px;
-      margin-right: 12px;
-      background-color: #5eb89a;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 8px;
-      flex-shrink: 0;
-    }
-    .content {
-      flex-grow: 1;
-      padding: 12px 16px;
-      border-radius: 6px;
-      line-height: 1.5;
-      overflow-wrap: break-word;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-    }
-    .user .content {
-      background-color: #e2ddcc;
-    }
-    .claude .content {
-      background-color: #f7f7f5;
-    }
-    .user {
-      align-items: center;
-    }
-    .user-input {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      max-width: 800px;
-      margin: 0 auto;
-      display: flex;
-      gap: 10px;
-      padding: 16px;
-      background-color: #f2efe7;
-      border-top: 1px solid #d9d9e3;
-    }
-    input {
-      flex-grow: 1;
-      padding: 10px 14px;
-      border: 1px solid #d9d9e3;
-      border-radius: 6px;
-      font-size: 16px;
-      background-color: #ffffff;
-    }
-    input:focus {
-      outline: none;
-      border-color: #8e8ea0;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #ffffff;
-      color: #1a1a1a;
-      border: 1px solid #d9d9e3;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #f3f3f3;
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .button-container {
-      display: flex;
-      gap: 10px;
-    }
-    .cancel-button {
-      background-color: #ff4f4f;
-      color: white;
-    }
-    .cancel-button:hover {
-      background-color: #ff3333;
-    }
-    .content > *:first-child { margin-top: 0; }
-    .content > *:last-child { margin-bottom: 0; }
-    .content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
-      margin-top: 1em;
-      margin-bottom: 0.5em;
-      font-weight: bold;
-    }
-    .content h1 { font-size: 1.5em; }
-    .content h2 { font-size: 1.3em; }
-    .content h3 { font-size: 1.1em; }
-    .content p { margin-bottom: 0.5em; }
-    .content ul, .content ol {
-      margin-top: 0.25em;
-      margin-bottom: 0.5em;
-      padding-left: 1.5em;
-    }
-    .content li { margin-bottom: 0.25em; }
-    .content li > ul, .content li > ol { margin-top: 0.25em; margin-bottom: 0.25em; }
-    .content code {
-      background-color: #f0f0f0;
-      padding: 0.2em 0.4em;
-      border-radius: 3px;
-      font-family: monospace;
-    }
-    .content pre {
-      background-color: #f0f0f0;
-      padding: 0.5em;
-      border-radius: 5px;
-      overflow-x: auto;
-      margin: 0.5em 0;
-    }
-    .content pre code {
-      background-color: transparent;
-      padding: 0;
-    }
-    .content a { color: #0000EE; text-decoration: underline; }
-    .content blockquote {
-      border-left: 3px solid #ccc;
-      margin: 0.5em 0;
-      padding-left: 1em;
-      color: #666;
-    }
-    .content table {
-      border-collapse: collapse;
-      margin: 0.5em 0;
-    }
-    .content th, .content td {
-      border: 1px solid #ccc;
-      padding: 0.3em 0.5em;
-    }
-    .content img {
-      max-width: 100%;
-      height: auto;
-    }
-    .content pre {
-      margin: 0.5em 0;
-      padding: 0;
-    }
-    .content pre code {
-      display: block;
-      padding: 0.5em;
-      overflow-x: auto;
-    }
     ${unsafeCSS(highlightStyle)}
+    .collapsible {
+      background-color: #f2efe7;
+      color: #444;
+      cursor: pointer;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .content {
+      // display: block; /* Make code blocks visible by default */
+      overflow: hidden;
+      background-color: #f9f9f9;
+      padding: 0 18px;
+    }
   `;
 
   override render() {
     return html`
-      <div class="chat-container">
+      <style type="text/css">${style.toString()}</style>
+      <div class="max-w-3xl mx-auto p-5 pb-24 bg-[#f2efe7] rounded-lg chatoutput">
         ${this.messages.map(message => html`
-          <div class="message ${message.role === 'user' ? 'user' : 'claude'}">
-            ${ message.role === 'user' ? html`<div class="avatar">🗨️</div>` : '' /* 👤️ */ }
-<!--            <div class="avatar">${message.role === 'user' ? 'AM' : 'C'}</div>-->
-            <div class="content">${unsafeHTML(this.formatMessage(message.content))}</div>
+          <div class="flex items-start mb-4 animate-fadeIn">
+            ${message.role === 'user' 
+              ? html`<div class="w-6 h-6 rounded-lg mr-3 bg-[#5eb89a] text-white flex items-center justify-center font-bold text-xs flex-shrink-0">🗨️</div>`
+              : ''}
+            <div class="leading-relaxed flex-grow py-0.5 px-2 rounded-lg shadow-sm ${message.role === 'user' ? 'bg-[#e2ddcc]' : 'bg-[#f7f7f5]'}">
+              ${unsafeHTML(this.formatMessage(message.content))}
+            </div>
           </div>
         `)}
         ${this.isWaiting ? html`
-          <div class="message claude">
-            <div class="avatar">C</div>
-            <div class="content">${unsafeHTML(this.formatMessage(this.streamingMessage))}</div>
+          <div class="flex items-start mb-4 animate-fadeIn">
+            <div class="w-6 h-6 rounded-lg mr-3 bg-[#5eb89a] text-white flex items-center justify-center font-bold text-xs flex-shrink-0">C</div>
+            <div class="flex-grow p-3 rounded-lg shadow-sm bg-[#f7f7f5]">
+              ${unsafeHTML(this.formatMessage(this.streamingMessage))}
+            </div>
           </div>
         ` : ''}
       </div>
-      <div class="user-input">
+      <div class="fixed bottom-0 left-0 right-0 max-w-3xl mx-auto flex gap-2 p-4 bg-[#f2efe7] border-t border-[#d9d9e3]">
         <input
-            type="text"
-            .value=${this.userInput}
-            @input=${this._onInput}
-            @keyup=${this._onKeyUp}
-            placeholder="Send a message..."
-            ?disabled=${this.isWaiting}
+          type="text"
+          .value=${this.userInput}
+          @input=${this._onInput}
+          @keyup=${this._onKeyUp}
+          placeholder="Send a message..."
+          ?disabled=${this.isWaiting}
+          class="flex-grow p-2 border border-[#d9d9e3] rounded-lg text-base bg-white focus:outline-none focus:border-[#8e8ea0]"
         >
-        <div class="button-container">
+        <div class="flex gap-2">
           ${this.isWaiting
-              ? html`<button @click=${this._onCancel} class="cancel-button" ?disabled=${this.isCancelling}>Cancel</button>`
-              : html`<button @click=${this._onSubmit} ?disabled=${this.isWaiting}>Send</button>`
+            ? html`<button @click=${this._onCancel} class="p-2 bg-[#ff4f4f] text-white border border-[#d9d9e3] rounded-lg cursor-pointer text-base transition-colors hover:bg-[#ff3333] disabled:opacity-50 disabled:cursor-not-allowed" ?disabled=${this.isCancelling}>Cancel</button>`
+            : html`<button @click=${this._onSubmit} class="p-2 bg-white text-[#1a1a1a] border border-[#d9d9e3] rounded-lg cursor-pointer text-base transition-colors hover:bg-[#f3f3f3] disabled:opacity-50 disabled:cursor-not-allowed" ?disabled=${this.isWaiting}>Send</button>`
           }
+          <button @click=${this.clearChatState} class="p-2 bg-[#ff4f4f] text-white border border-[#d9d9e3] rounded-lg cursor-pointer text-base transition-colors hover:bg-[#ff3333]">Clear</button>
         </div>
       </div>
     `;
@@ -314,7 +170,36 @@ export class ClaudeClone extends LitElement {
     const sanitizedContent = DOMPurify.sanitize(parsedContent, {
       ADD_ATTR: ['class'], // Allow the 'class' attribute for syntax highlighting
     });
-    return sanitizedContent;
+
+    // Wrap code blocks in a collapsible container
+    const collapsibleContent = sanitizedContent.replace(/<pre><code/g, '<button class="collapsible">Toggle Code</button><div class="content visible"><pre><code');
+    return collapsibleContent.replace(/<\/code><\/pre>/g, '</code></pre></div>');
+  }
+
+  override firstUpdated() {
+    this.addCollapsibleListeners();
+  }
+
+  override updated(changedProperties: Map<string, unknown>) {
+    if (changedProperties.has('messages') || changedProperties.has('isWaiting') || changedProperties.has('streamingMessage')) {
+      this._scrollToBottom();
+    }
+    // this.addCollapsibleListeners();
+  }
+
+  private addCollapsibleListeners() {
+    this.shadowRoot?.querySelectorAll('.collapsible').forEach(button => {
+      button.addEventListener('click', () => {
+        const content = button.nextElementSibling as HTMLElement;
+        if (content.classList.contains('visible')) {
+          content.classList.remove('visible');
+          content.classList.add('hidden');
+        } else {
+          content.classList.remove('hidden');
+          content.classList.add('visible');
+        }
+      });
+    });
   }
 
   private _onInput(e: InputEvent) {
@@ -366,17 +251,6 @@ export class ClaudeClone extends LitElement {
           this.handleStreamEnd();
         });
 
-        // this.currentStream.on('abort', (error: APIUserAbortError) => {
-        //   console.error('Steam aborted:', error);
-        //   if (this.isCancelling) {
-        //     console.log('Generation was cancelled.');
-        //   } else {
-        //     const errorMessage = { role: 'assistant' as const, content: "I'm sorry, stream was aborted. Please try again." };
-        //     this.messages = [...this.messages, errorMessage];
-        //   }
-        //   this.handleStreamEnd();
-        // });
-
         this.currentStream.on('finalMessage', (message: Message) => {
           if (!this.isCancelling) {
             // Confirm the message is a text message
@@ -411,6 +285,7 @@ export class ClaudeClone extends LitElement {
     this.currentStream = null;
     this.streamingMessage = '';
     this.requestUpdate();
+    this.saveChatState();
   }
 
   private _onCancel() {
@@ -432,11 +307,16 @@ export class ClaudeClone extends LitElement {
     }, 0);
   }
 
-  override updated(changedProperties: Map<string, unknown>) {
-    if (changedProperties.has('messages') || changedProperties.has('isWaiting') || changedProperties.has('streamingMessage')) {
-      this._scrollToBottom();
-    }
+  private clearChatState() {
+    localStorage.removeItem('chatState');
+    this.messages = [];
+    this.userInput = '';
+    this.isWaiting = false;
+    this.streamingMessage = '';
+    this.isCancelling = false;
+    this.requestUpdate();
   }
+
 }
 
 customElements.define('claude-clone', ClaudeClone);
