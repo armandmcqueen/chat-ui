@@ -5,6 +5,7 @@ import { AnthropicError } from "@anthropic-ai/sdk/error";
 import Message = Anthropic.Message;
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { markedHighlight } from "marked-highlight";
+import { config } from './config.js';
 
 
 import { MessageStream } from "@anthropic-ai/sdk/lib/MessageStream";
@@ -65,7 +66,7 @@ export class ClaudeClone extends LitElement {
     this.loadChatState();
 
     // If no saved state, initialize with example messages
-    if (this.messages.length === 0) {
+    if (this.messages.length === 0 && config.prepopulateChat) {
       this.initializeExampleChat();
     }
   }
